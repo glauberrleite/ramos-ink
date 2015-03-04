@@ -5,10 +5,8 @@ import edu.ramos.ramosink.application.Main;
 import edu.ramos.ramosink.view.BaseController;
 
 public class HelpController extends BaseController{
-	
 	@FXML
-	private void back(){
+	public void back(){
 		Main.showGen();
 	}
-	
 }

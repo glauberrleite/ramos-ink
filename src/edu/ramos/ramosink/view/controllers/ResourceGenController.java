@@ -3,10 +3,15 @@ package edu.ramos.ramosink.view.controllers;
 import java.io.File;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import edu.ramos.ramosink.application.Main;
@@ -78,21 +83,25 @@ public class ResourceGenController extends BaseController {
 	@FXML
 	private void generate() {
 		if (!locked) {
-			// Starts the Resources Processing
-			lockControls();
-
 			if (filesList.getItems().isEmpty()) {
-				Main.showMsg("Empty List");
+				JOptionPane.showMessageDialog(null, "No File selected");
+			} else if (!imageBox.isSelected() && !videoBox.isSelected()) {
+				JOptionPane.showMessageDialog(null, "No Process selected");
 			} else {
-				new Thread(new Runnable() {
+
+				// Starts the Resources Processing
+				lockControls();
+				
+				/*new Thread(new Task<ProgressBar>() {
 
 					@Override
-					public void run() {
+					protected ProgressBar call() throws Exception {
 						int i = 1;
 						if (imageBox.isSelected()) {
 							for (String path : filesList.getItems()) {
 								ImageRendering render = new ImageRendering(
-										path, i, filesList.getItems().size());
+										path, i, filesList.getItems()
+												.size());
 
 								render.generateLastFrame();
 
@@ -104,7 +113,8 @@ public class ResourceGenController extends BaseController {
 						if (videoBox.isSelected()) {
 							for (String path : filesList.getItems()) {
 								ImageRendering render = new ImageRendering(
-										path, i, filesList.getItems().size());
+										path, i, filesList.getItems()
+												.size());
 
 								render.run();
 
@@ -113,13 +123,50 @@ public class ResourceGenController extends BaseController {
 						}
 
 						unlockControls();
-						Main.changeStatus(Status.IDLE);
+						Main.setStatus(Status.IDLE);
+						return null;
 					}
-				}).run();
+				}).start();
+				*/
+				
+				Platform.runLater(new Runnable() {
+
+					@Override
+					public void run() {
+						int i = 1;
+						if (imageBox.isSelected()) {
+							for (String path : filesList.getItems()) {
+								ImageRendering render = new ImageRendering(
+										path, i, filesList.getItems()
+												.size());
+
+								render.generateLastFrame();
+
+								i++;
+							}
+						}
+
+						i = 1;
+						if (videoBox.isSelected()) {
+							for (String path : filesList.getItems()) {
+								ImageRendering render = new ImageRendering(
+										path, i, filesList.getItems()
+												.size());
+
+								render.run();
+
+								i++;
+							}
+						}
+
+						unlockControls();
+						Main.setStatus(Status.IDLE);
+					}
+				});
 
 			}
-
 		}
+
 	}
 
 	private void lockControls() {

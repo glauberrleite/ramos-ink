@@ -45,18 +45,6 @@
                   <Insets />
                </HBox.margin>
             </Label>
-            <Button mnemonicParsing="false" onAction="#config">
-               <graphic>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../resources/config.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <HBox.margin>
-                  <Insets left="225.0" />
-               </HBox.margin>
-            </Button>
             <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#help">
                <graphic>
                   <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
@@ -66,7 +54,7 @@
                   </ImageView>
                </graphic>
                <HBox.margin>
-                  <Insets left="20.0" />
+                  <Insets left="300.0" />
                </HBox.margin>
             </Button>
          </children>

@@ -8,7 +8,6 @@ import edu.ramos.ramosink.model.Status;
 import edu.ramos.ramosink.view.BaseController;
 
 public class RootLayoutController extends BaseController {
-
 	@FXML
 	private ProgressBar progressBar;
 
@@ -16,64 +15,60 @@ public class RootLayoutController extends BaseController {
 	private Label statusLabel;
 
 	@FXML
-	private void config() {
-		Main.showConfig();
-	}
-
-	@FXML
 	private void help() {
 		Main.showHelp();
 	}
 
-	public void setProgressBar(double percentage) {
-		if (percentage >= 0 && percentage <= 1)
-			progressBar.setProgress(percentage / 100);
+	public void setStatus(Status status, int index, int size) {
+		if (size == 1)
+			setStatus(status);
+		else
+			switch (status) {
+			case IDLE: {
+				statusLabel.setText("Status: Idle");
+				progressBar.setProgress(0);
+			}
+				break;
+			case GENERATING_IMAGE:
+				statusLabel.setText("Status: Generating Writing Image " + index
+						+ " of " + size);
+				break;
+			case GENERATING_VIDEO:
+				statusLabel.setText("Status: Generating Writing Video " + index
+						+ " of " + size);
+				break;
+			case SUCCESS: {
+				statusLabel.setText("Status: Success");
+				progressBar.setProgress(1);
+			}
+				break;
+			}
+
 	}
 
-	public void changeStatus(Status status) {
+	public void setStatus(Status status) {
 		switch (status) {
 		case IDLE: {
-			statusLabel.setText("Idle");
+			statusLabel.setText("Status: Idle");
 			progressBar.setProgress(0);
 		}
 			break;
-
 		case GENERATING_IMAGE:
-			statusLabel.setText("Generating Writing Image");
+			statusLabel.setText("Status: Generating Writing Image");
 			break;
 		case GENERATING_VIDEO:
-			statusLabel.setText("Generating Writing Video");
+			statusLabel.setText("Status: Generating Writing Video");
 			break;
 		case SUCCESS: {
-			statusLabel.setText("Success");
+			statusLabel.setText("Status: Success");
 			progressBar.setProgress(1);
 		}
 			break;
 		}
 	}
-
-	public void changeStatus(Status status, int index, int size) {
-
-		switch (status) {
-		case IDLE: {
-			statusLabel.setText("Idle");
-			progressBar.setProgress(0);
-		}
-			break;
-		case GENERATING_IMAGE:
-			statusLabel.setText("Generating Writing Image " + index + " of "
-					+ size);
-			break;
-		case GENERATING_VIDEO:
-			statusLabel.setText("Generating Writing Video " + index + " of "
-					+ size);
-			break;
-		case SUCCESS: {
-			statusLabel.setText("Success " + index + " of " + size);
-			progressBar.setProgress(1);
-		}
-			break;
-		}
+	
+	public void setProgress(double percentage){
+		if(percentage >= 0 || percentage <= 100)
+		progressBar.setProgress(percentage/100);
 	}
-
 }

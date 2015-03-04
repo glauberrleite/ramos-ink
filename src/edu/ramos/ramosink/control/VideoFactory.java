@@ -8,17 +8,18 @@ import javax.imageio.ImageIO;
 
 import com.xuggle.mediatool.IMediaWriter;
 import com.xuggle.mediatool.ToolFactory;
+import com.xuggle.xuggler.video.ConverterFactory;
 
 import edu.ramos.ramosink.application.Main;
 
 public class VideoFactory {
 
-	private String DIR_PATH;
-	private int FRAME_RATE = 10;
-	private int WIDTH = 300;
-	private int HEIGHT = 300;
-	private String IMAGE_FORMAT = ".jpg";
-	private String outputfile = "output.avi";
+	private String dirPath;
+	private int frameRate = 10;
+	private int width = 566;
+	private int height = 800;
+	private String imageFormat = ".png";
+	private String outputfile = "output.mp4";
 	private static VideoFactory instance = null;
 
 	private VideoFactory() {
@@ -36,7 +37,7 @@ public class VideoFactory {
 		File curret_image;
 		BufferedImage bufferedImage = null;
 		long time = 0;
-		double increment_time = 1000 / FRAME_RATE;
+		double increment_time = 1000 / frameRate;
 		
 
 		try {
@@ -46,71 +47,72 @@ public class VideoFactory {
 			// We tell it we're going to add one video stream, with id 0,
 			// at position 0, and that it will have a fixed frame rate of
 			// FRAME_RATE.
-			int streamId = writer.addVideoStream(0, 0, WIDTH, HEIGHT);
+			int streamId = writer.addVideoStream(0, 0, width, height);
 
 			// Now, we're going to loop
 			// long startTime = System.nanoTime();
 
-			int length = (new File(DIR_PATH)).listFiles().length;
-			
-			for (int index = 1; (curret_image = new File(DIR_PATH + index
-					+ IMAGE_FORMAT)).exists(); index++) {
+			int count = (new File(dirPath)).listFiles().length;
+			for (int index = 1; (curret_image = new File(dirPath + index
+					+ imageFormat)).exists(); index++) {
 
 				// sets progress bar
-				Main.setProgressBar(50 + (index*50)/length);
-			
+				Main.setProgress(50 + ((index*50)/count));
+
 				bufferedImage = ImageIO.read(curret_image);
 
 				// encode the image to stream #0
+				bufferedImage = ConverterFactory.convertToType(bufferedImage, BufferedImage.TYPE_BYTE_GRAY);
 				writer.encodeVideo(streamId, bufferedImage,
 						time += increment_time, TimeUnit.MILLISECONDS);
 				System.out.println("encoded image: " + index);
 				// Thread.sleep(2000);
-			}
+			}			
 			writer.close();
+			//writer.setForceInterleave(false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public String getIMAGE_FORMAT() {
-		return IMAGE_FORMAT;
+	public String getImageFormat() {
+		return imageFormat;
 	}
 
-	public void setIMAGE_FORMAT(String IMAGE_FORMAT) {
-		this.IMAGE_FORMAT = IMAGE_FORMAT;
+	public void setImageFormat(String imageFormat) {
+		this.imageFormat = imageFormat;
 	}
 
-	public String getDIR_PATH() {
-		return DIR_PATH;
+	public String getDirPath() {
+		return dirPath;
 	}
 
-	public void setDIR_PATH(String DIR_PATH) {
-		this.DIR_PATH = DIR_PATH;
+	public void setDirPath(String dirPath) {
+		this.dirPath = dirPath;
 	}
 
-	public int getFRAME_RATE() {
-		return FRAME_RATE;
+	public int getFrameRate() {
+		return frameRate;
 	}
 
-	public void setFRAME_RATE(int FRAME_RATE) {
-		this.FRAME_RATE = FRAME_RATE;
+	public void setFrameRate(int frameRate) {
+		this.frameRate = frameRate;
 	}
 
-	public int getWIDTH() {
-		return WIDTH;
+	public int getWidth() {
+		return width;
 	}
 
-	public void setWIDTH(int WIDTH) {
-		this.WIDTH = WIDTH;
+	public void setWidth(int width) {
+		this.width = width;
 	}
 
-	public int getHEIGHT() {
-		return HEIGHT;
+	public int getHeight() {
+		return height;
 	}
 
-	public void setHEIGHT(int HEIGHT) {
-		this.HEIGHT = HEIGHT;
+	public void setHeight(int height) {
+		this.height = height;
 	}
 
 	public String getOutputfile() {

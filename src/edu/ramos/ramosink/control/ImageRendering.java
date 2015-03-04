@@ -26,6 +26,7 @@ public class ImageRendering extends Thread {
 	private String tempDir;
 	private String absoluteOutputDir;
 	private String inkMLPath;
+	private String filename;
 	private int index;
 	private long time;
 	private int size;
@@ -37,26 +38,14 @@ public class ImageRendering extends Thread {
 		index = 1;
 		size = 1;
 
+		// Determining the files
+		File file = new File(inkMLPath);
+		absoluteOutputDir = file.getParent() + System.getProperty("file.separator");
+		tempDir = absoluteOutputDir + "temp" + System.getProperty("file.separator");
+		// Taking the filename without the extension
+		filename = file.getName().split(".")[0];
+
 		time = new Date().getTime();
-
-		if (ObjectStorage.getInstance().getOutputDir().endsWith("/")) {
-			tempDir = ObjectStorage.getInstance().getOutputDir() + "RAMOS_Ink/"
-					+ "temp/";
-
-			absoluteOutputDir = ObjectStorage.getInstance().getOutputDir()
-					+ "RAMOS_Ink/";
-		} else {
-			tempDir = ObjectStorage.getInstance().getOutputDir()
-					+ "/RAMOS_Ink/" + "temp/";
-
-			absoluteOutputDir = ObjectStorage.getInstance().getOutputDir()
-					+ "/RAMOS_Ink/";
-		}
-
-		// Making the temporary directory if it doesn't exist
-		if (!new File(tempDir).exists()) {
-			new File(tempDir).mkdir();
-		}
 	}
 
 	public ImageRendering(String inkMLPath, int index, int length) {
@@ -64,26 +53,14 @@ public class ImageRendering extends Thread {
 		this.index = index;
 		this.size = length;
 
+		// Determining the files
+		File file = new File(inkMLPath);
+		absoluteOutputDir = file.getParent() + System.getProperty("file.separator");
+		tempDir = absoluteOutputDir + "temp" + System.getProperty("file.separator");
+		// Taking the filename without the extension
+		filename = file.getName();
+
 		time = new Date().getTime();
-
-		if (ObjectStorage.getInstance().getOutputDir().endsWith("/")) {
-			tempDir = ObjectStorage.getInstance().getOutputDir() + "RAMOS_Ink/"
-					+ "temp/";
-
-			absoluteOutputDir = ObjectStorage.getInstance().getOutputDir()
-					+ "RAMOS_Ink/";
-		} else {
-			tempDir = ObjectStorage.getInstance().getOutputDir()
-					+ "/RAMOS_Ink/" + "temp/";
-
-			absoluteOutputDir = ObjectStorage.getInstance().getOutputDir()
-					+ "/RAMOS_Ink/";
-		}
-
-		// Making the temporary directory if it doesn't exist
-		if (!new File(tempDir).exists()) {
-			new File(tempDir).mkdir();
-		}
 	}
 
 	public void generateLastFrame() {
@@ -97,10 +74,8 @@ public class ImageRendering extends Thread {
 			// points of the writing
 			strokes = RetrieveStrokes.getInstance().getPointsFromXML(inkMLPath);
 
-			System.out
-					.println(ObjectStorage.getInstance().getBackgroundImage());
-			buffer = ImageIO.read(new File(ObjectStorage.getInstance()
-					.getBackgroundImage()));
+			buffer = ImageIO.read(Main.class
+					.getResource("../resources/mask.bmp"));
 
 			graphics2d = buffer.createGraphics();
 
@@ -108,13 +83,13 @@ public class ImageRendering extends Thread {
 			graphics2d.setStroke(new BasicStroke(PEN_TIP_WIDTH));
 
 			if (size > 1) {
-				Main.changeStatus(Status.GENERATING_IMAGE, index, size);
+				Main.setStatus(Status.GENERATING_IMAGE, index, size);
 			} else {
-				Main.changeStatus(Status.GENERATING_IMAGE);
+				Main.setStatus(Status.GENERATING_IMAGE);
 			}
 
 			for (int i = 1; i < strokes.size(); i++) {
-				Main.setProgressBar((100 * i) / strokes.size());
+				Main.setProgress((100 * i) / strokes.size());
 
 				// draws
 				if (strokes.get(i).getId() == strokes.get(i - 1).getId()) {
@@ -142,17 +117,17 @@ public class ImageRendering extends Thread {
 				}
 			}
 
-			File image = new File(absoluteOutputDir + time + "_WritingImage"
-					+ "." + IMAGE_FORMAT);
+			File image = new File(absoluteOutputDir + time + "-" + filename
+					+ "_WritingImage" + "." + IMAGE_FORMAT);
 
 			ImageIO.write(buffer, IMAGE_FORMAT.toUpperCase(), image);
 
-			deleteTempFiles();
+			// deleteTempFiles();
 
 			if (size > 1) {
-				Main.changeStatus(Status.SUCCESS, index, size);
+				Main.setStatus(Status.SUCCESS, index, size);
 			} else {
-				Main.changeStatus(Status.SUCCESS);
+				Main.setStatus(Status.SUCCESS);
 			}
 
 			Thread.sleep(3000);
@@ -172,8 +147,8 @@ public class ImageRendering extends Thread {
 		long diff = 0;
 		try {
 
-			buffer = ImageIO.read(new File(ObjectStorage.getInstance()
-					.getBackgroundImage()));
+			buffer = ImageIO.read(Main.class
+					.getResourceAsStream("../resources/mask.bmp"));
 
 			graphics2d = buffer.createGraphics();
 
@@ -181,8 +156,8 @@ public class ImageRendering extends Thread {
 			graphics2d.setStroke(new BasicStroke(PEN_TIP_WIDTH));
 
 			for (int i = 1; i < strokes.size(); i++) {
-				// progress bar size setting
-				Main.setProgressBar((50 * i) / strokes.size());
+				// progress bar
+				Main.setProgress((50 * i) / strokes.size());
 
 				// build frames
 				diff += strokes.get(i).getTime() - strokes.get(i - 1).getTime();
@@ -244,10 +219,15 @@ public class ImageRendering extends Thread {
 	 */
 	private void begin() {
 
+		// Making the temporary directory if it doesn't exist
+		if (!new File(tempDir).exists()) {
+			new File(tempDir).mkdir();
+		}
+
 		if (size > 1) {
-			Main.changeStatus(Status.GENERATING_VIDEO, index, size);
+			Main.setStatus(Status.GENERATING_VIDEO, index, size);
 		} else {
-			Main.changeStatus(Status.GENERATING_VIDEO);
+			Main.setStatus(Status.GENERATING_VIDEO);
 		}
 
 		// Retrieving in a data structure a list of objects representing points
@@ -255,27 +235,28 @@ public class ImageRendering extends Thread {
 		strokes = RetrieveStrokes.getInstance().getPointsFromXML(inkMLPath);
 
 		generateFramesFromPoints();
-
+		
+		/*
 		VideoFactory videoFactory = VideoFactory.getInstance();
 
-		videoFactory.setDIR_PATH(tempDir);
+		videoFactory.setDirPath(tempDir);
 
-		videoFactory.setIMAGE_FORMAT("." + IMAGE_FORMAT);
-		videoFactory.setFRAME_RATE(10);
-		videoFactory.setWIDTH(566);
-		videoFactory.setHEIGHT(800);
-		videoFactory
-				.setOutputfile(tempDir + "../" + time + "_WritingVideo.mp4");
+		videoFactory.setImageFormat("." + IMAGE_FORMAT);
+		videoFactory.setFrameRate(10);
+		videoFactory.setWidth(566);
+		videoFactory.setHeight(800);
+		videoFactory.setOutputfile(absoluteOutputDir + time + "-" + filename
+				+ "_WritingVideo.avi");
 		videoFactory.generateVideo();
+		*/
+		//deleteTempFiles();
 
-		deleteTempFiles();
-
-		Main.setProgressBar(100);
+		Main.setProgress(100);
 
 		if (size > 1) {
-			Main.changeStatus(Status.SUCCESS, index, size);
+			Main.setStatus(Status.SUCCESS, index, size);
 		} else {
-			Main.changeStatus(Status.SUCCESS);
+			Main.setStatus(Status.SUCCESS);
 		}
 
 		try {

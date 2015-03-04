@@ -6,7 +6,14 @@ import edu.ramos.ramosink.application.Main;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
 
+/**
+ * A basic AnchorPane Frame to make quicker the creation of new Frames.
+ * 
+ * @author glauberrleite
+ *
+ */
 public abstract class BaseFrame {
+
 	protected BaseController controller;
 	private AnchorPane pane;
 
@@ -16,7 +23,7 @@ public abstract class BaseFrame {
 
 	/**
 	 * A generic way to create an AnchorPane given the resource.
-	 *
+	 * 
 	 * @param resource
 	 *            The resource's location in classpath.
 	 * @return The AnchorPane.
@@ -27,10 +34,13 @@ public abstract class BaseFrame {
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(Main.class.getResource(resource));
 			pane = (AnchorPane) loader.load();
+
 			controller = loader.getController();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 		return pane;
 	}
 
@@ -40,10 +50,11 @@ public abstract class BaseFrame {
 
 	/**
 	 * Gives the view controller.
-	 *
+	 * 
 	 * @return A controller.
 	 */
 	public BaseController getController() {
 		return controller;
 	}
+
 }
