@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="270.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.ramos.ramosink.view.controllers.HelpController">
+   <children>
+      <VBox alignment="CENTER" prefHeight="270.0" prefWidth="600.0">
+         <children>
+            <Label alignment="TOP_CENTER" contentDisplay="TOP" text="Help" textAlignment="CENTER">
+               <font>
+                  <Font size="18.0" />
+               </font>
+            </Label>
+            <Button alignment="CENTER" mnemonicParsing="false" onAction="#back" text="Back" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
