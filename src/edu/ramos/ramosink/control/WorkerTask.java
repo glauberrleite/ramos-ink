@@ -23,7 +23,6 @@ public class WorkerTask extends Task<Void> {
 
 	@Override
 	protected Void call() throws Exception {
-		updateTitle("Cancel");
 		updateProgress(0, 100);
 
 		int i = 1;
@@ -59,28 +58,28 @@ public class WorkerTask extends Task<Void> {
 		String gImage = "Status: Generating Writing Image";
 		String gVideo = "Status: Generating Writing Video";
 
-		if (size != 1) {
+		if (size != 1)
 			gImage += " " + index + " of " + size;
-			gVideo += " " + index + " of " + size;
-		} else
-			switch (status) {
-			case IDLE: {
-				updateMessage("Status: Idle");
-				updateProgress(0, 1);
-			}
-				break;
-			case GENERATING_IMAGE:
-				updateMessage(gImage);
-				break;
-			case GENERATING_VIDEO:
-				updateMessage(gVideo);
-				break;
-			case SUCCESS: {
-				updateMessage("Status: Success");
-				updateProgress(1, 1);
-			}
-				break;
-			}
+		gVideo += " " + index + " of " + size;
+
+		switch (status) {
+		case IDLE: {
+			updateMessage("Status: Idle");
+			updateProgress(0, 1);
+		}
+			break;
+		case GENERATING_IMAGE:
+			updateMessage(gImage);
+			break;
+		case GENERATING_VIDEO:
+			updateMessage(gVideo);
+			break;
+		case SUCCESS: {
+			updateMessage("Status: Success");
+			updateProgress(1, 1);
+		}
+			break;
+		}
 	}
 
 	public void setStatus(Status status) {

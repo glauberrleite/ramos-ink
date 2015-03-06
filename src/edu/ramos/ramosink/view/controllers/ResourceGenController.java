@@ -110,7 +110,7 @@ public class ResourceGenController extends BaseController {
 				// When the task is over, unlock the controls
 				worker.setOnSucceeded(event -> {
 					unlockControls();
-					JOptionPane.showConfirmDialog(null,
+					JOptionPane.showMessageDialog(null,
 							"All processes concluded with success");
 				});
 

@@ -94,11 +94,7 @@ public class ImageRendering extends Thread {
 			graphics2d.setColor(Color.BLACK);
 			graphics2d.setStroke(new BasicStroke(PEN_TIP_WIDTH));
 
-			if (size > 1) {
-				task.setStatus(Status.GENERATING_IMAGE, index, size);
-			} else {
-				task.setStatus(Status.GENERATING_IMAGE);
-			}
+			task.setStatus(Status.GENERATING_IMAGE, index, size);
 
 			for (int i = 1; i < strokes.size(); i++) {
 				task.setProgress((100 * i) / strokes.size());
@@ -140,7 +136,7 @@ public class ImageRendering extends Thread {
 				task.setStatus(Status.SUCCESS);
 			}
 
-			Thread.sleep(3000);
+			Thread.sleep(1000);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -234,11 +230,7 @@ public class ImageRendering extends Thread {
 			new File(tempDir).mkdir();
 		}
 
-		if (size > 1) {
-			task.setStatus(Status.GENERATING_VIDEO, index, size);
-		} else {
-			task.setStatus(Status.GENERATING_VIDEO);
-		}
+		task.setStatus(Status.GENERATING_VIDEO, index, size);
 
 		// Retrieving in a data structure a list of objects representing points
 		// of the writing
@@ -263,11 +255,7 @@ public class ImageRendering extends Thread {
 
 		task.setProgress(100);
 
-		if (size > 1) {
-			task.setStatus(Status.SUCCESS, index, size);
-		} else {
-			task.setStatus(Status.SUCCESS);
-		}
+		task.setStatus(Status.SUCCESS, index, size);
 
 		try {
 			Thread.sleep(3000);
