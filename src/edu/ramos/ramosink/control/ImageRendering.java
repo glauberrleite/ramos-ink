@@ -86,8 +86,8 @@ public class ImageRendering extends Thread {
 			// points of the writing
 			strokes = RetrieveStrokes.getInstance().getPointsFromXML(inkMLPath);
 
-			buffer = ImageIO.read(Main.class
-					.getResource("../resources/mask.bmp"));
+			buffer = ImageIO.read(Main.class.getClassLoader().getResource(
+					"edu/ramos/ramosink/resources/mask.bmp"));
 
 			graphics2d = buffer.createGraphics();
 
@@ -153,8 +153,9 @@ public class ImageRendering extends Thread {
 		long diff = 0;
 		try {
 
-			buffer = ImageIO.read(Main.class
-					.getResourceAsStream("../resources/mask.bmp"));
+			buffer = ImageIO.read(Main.class.getClassLoader()
+					.getResourceAsStream(
+							"edu/ramos/ramosink/resources/mask.bmp"));
 
 			graphics2d = buffer.createGraphics();
 
