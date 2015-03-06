@@ -58,9 +58,10 @@ public class WorkerTask extends Task<Void> {
 		String gImage = "Status: Generating Writing Image";
 		String gVideo = "Status: Generating Writing Video";
 
-		if (size != 1)
+		if (size != 1) {
 			gImage += " " + index + " of " + size;
-		gVideo += " " + index + " of " + size;
+			gVideo += " " + index + " of " + size;
+		}
 
 		switch (status) {
 		case IDLE: {
