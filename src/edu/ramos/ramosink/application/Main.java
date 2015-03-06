@@ -55,13 +55,13 @@ public class Main extends Application {
 			primaryStage.setFullScreen(false);
 			primaryStage.setResizable(false);
 			primaryStage.getIcons().add(
-					new Image(getClass().getResourceAsStream(
-							"../resources/logo.png")));
+					new Image(getClass().getClassLoader().getResourceAsStream(
+							"edu/ramos/ramosink/resources/logo.png")));
 
 			// Loads the Layout defined by the respective .fxml file
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(getClass()
-					.getResource("../view/RootLayout.fxml"));
+			loader.setLocation(getClass().getClassLoader()
+					.getResource("edu/ramos/ramosink/view/RootLayout.fxml"));
 			rootLayout = (BorderPane) loader.load();
 			Scene scene = new Scene(rootLayout);
 

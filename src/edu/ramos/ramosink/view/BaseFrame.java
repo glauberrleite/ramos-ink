@@ -32,7 +32,8 @@ public abstract class BaseFrame {
 		AnchorPane pane = null;
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(Main.class.getResource(resource));
+			loader.setLocation(Main.class.getClassLoader()
+					.getResource(resource));
 			pane = (AnchorPane) loader.load();
 
 			controller = loader.getController();

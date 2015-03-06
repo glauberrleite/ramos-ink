@@ -8,7 +8,7 @@ import edu.ramos.ramosink.view.BaseFrame;
  *
  */
 public class HelpFrame extends BaseFrame{
-private static final String RESOURCE = "../view/Help.fxml";
+private static final String RESOURCE = "edu/ramos/ramosink/view/Help.fxml";
 	
 	public HelpFrame(){
 		super(RESOURCE);
