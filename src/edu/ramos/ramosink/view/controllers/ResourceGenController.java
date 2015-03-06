@@ -129,7 +129,7 @@ public class ResourceGenController extends BaseController {
 		filesList.setDisable(true);
 		imageBox.setDisable(true);
 		videoBox.setDisable(true);
-		generateButton.setText("Cancel");
+		generateButton.setDisable(true);
 		locked = true;
 	}
 
@@ -137,7 +137,7 @@ public class ResourceGenController extends BaseController {
 		filesList.setDisable(false);
 		imageBox.setDisable(false);
 		videoBox.setDisable(false);
-		generateButton.setText("Generate");
+		generateButton.setDisable(false);
 		locked = false;
 	}
 

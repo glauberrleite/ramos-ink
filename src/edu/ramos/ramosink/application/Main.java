@@ -79,12 +79,14 @@ public class Main extends Application {
 	}
 
 	public static void showGen() {
-		resourceGen = new ResourceGenFrame();
+		if(resourceGen == null)
+			resourceGen = new ResourceGenFrame();
 		rootLayout.setCenter(resourceGen.getAnchorPane());
 	}
 
 	public static void showHelp() {
-		help = new HelpFrame();
+		if(help == null)
+			help = new HelpFrame();
 		rootLayout.setCenter(help.getAnchorPane());
 	}
 
