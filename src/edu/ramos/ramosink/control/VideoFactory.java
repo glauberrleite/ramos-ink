@@ -1,5 +1,24 @@
 package edu.ramos.ramosink.control;
 
+/**
+ *  * RAMOS Ink converts InkML files received from a Livescribe Smartpen's penlet
+ * to image and/or video. This tool is a part of the RAMOS system, developed to
+ * run in an independent way. Copyright (C) 2015 Glauber Rodrigues Leite
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -10,8 +29,11 @@ import com.xuggle.mediatool.IMediaWriter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.xuggler.ICodec;
 
-import edu.ramos.ramosink.application.Main;
-
+/**
+ * 
+ * @author glauberrleite
+ *
+ */
 public class VideoFactory {
 
 	private String dirPath;
@@ -21,6 +43,7 @@ public class VideoFactory {
 	private String imageFormat = ".png";
 	private String outputfile;
 	private static VideoFactory instance = null;
+	private WorkerTask task;
 
 	private VideoFactory() {
 	}
@@ -57,7 +80,7 @@ public class VideoFactory {
 					+ imageFormat)).exists(); index++) {
 
 				// sets progress bar
-				Main.setProgress(50 + ((index * 50) / count));
+				task.setProgress(50 + ((index * 50) / count));
 
 				bufferedImage = ImageIO.read(curret_image);
 
@@ -71,10 +94,8 @@ public class VideoFactory {
 				writer.encodeVideo(streamId, image, time += increment_time,
 						TimeUnit.MILLISECONDS);
 				System.out.println("encoded image: " + index);
-				// Thread.sleep(2000);
 			}
 			writer.close();
-			// writer.setForceInterleave(false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -126,6 +147,14 @@ public class VideoFactory {
 
 	public void setOutputfile(String outputfile) {
 		this.outputfile = outputfile;
+	}
+
+	public WorkerTask getTask() {
+		return task;
+	}
+
+	public void setTask(WorkerTask task) {
+		this.task = task;
 	}
 
 }

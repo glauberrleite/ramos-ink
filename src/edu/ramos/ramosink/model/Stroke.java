@@ -1,5 +1,10 @@
 package edu.ramos.ramosink.model;
 
+/**
+ * 
+ * @author glauberrleite
+ *
+ */
 public class Stroke {
 
 	private long id;

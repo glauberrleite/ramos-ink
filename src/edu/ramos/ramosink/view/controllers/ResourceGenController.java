@@ -5,21 +5,25 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ProgressBar;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import edu.ramos.ramosink.application.Main;
-import edu.ramos.ramosink.control.ImageRendering;
-import edu.ramos.ramosink.model.Status;
+import edu.ramos.ramosink.control.WorkerTask;
 import edu.ramos.ramosink.view.BaseController;
 
+/**
+ * 
+ * @author glauberrleite
+ *
+ */
 public class ResourceGenController extends BaseController {
+
+	Task<Void> worker;
 
 	private boolean locked = false;
 
@@ -89,82 +93,34 @@ public class ResourceGenController extends BaseController {
 				JOptionPane.showMessageDialog(null, "No Process selected");
 			} else {
 
-				// Starts the Resources Processing
 				lockControls();
-				
-				/*new Thread(new Task<ProgressBar>() {
 
-					@Override
-					protected ProgressBar call() throws Exception {
-						int i = 1;
-						if (imageBox.isSelected()) {
-							for (String path : filesList.getItems()) {
-								ImageRendering render = new ImageRendering(
-										path, i, filesList.getItems()
-												.size());
+				// Unbinding the properties
+				worker = new WorkerTask(imageBox.isSelected(),
+						videoBox.isSelected(), filesList.getItems());
+				Main.getStatus().textProperty().unbind();
+				Main.getProgressBar().progressProperty().unbind();
 
-								render.generateLastFrame();
+				// Associating properties to the task, turning possible to
+				// manipulate the GUI outside the JavaFX Main Thread
+				Main.getStatus().textProperty().bind(worker.messageProperty());
+				Main.getProgressBar().progressProperty()
+						.bind(worker.progressProperty());
 
-								i++;
-							}
-						}
-
-						i = 1;
-						if (videoBox.isSelected()) {
-							for (String path : filesList.getItems()) {
-								ImageRendering render = new ImageRendering(
-										path, i, filesList.getItems()
-												.size());
-
-								render.run();
-
-								i++;
-							}
-						}
-
-						unlockControls();
-						Main.setStatus(Status.IDLE);
-						return null;
-					}
-				}).start();
-				*/
-				
-				Platform.runLater(new Runnable() {
-
-					@Override
-					public void run() {
-						int i = 1;
-						if (imageBox.isSelected()) {
-							for (String path : filesList.getItems()) {
-								ImageRendering render = new ImageRendering(
-										path, i, filesList.getItems()
-												.size());
-
-								render.generateLastFrame();
-
-								i++;
-							}
-						}
-
-						i = 1;
-						if (videoBox.isSelected()) {
-							for (String path : filesList.getItems()) {
-								ImageRendering render = new ImageRendering(
-										path, i, filesList.getItems()
-												.size());
-
-								render.run();
-
-								i++;
-							}
-						}
-
-						unlockControls();
-						Main.setStatus(Status.IDLE);
-					}
+				// When the task is over, unlock the controls
+				worker.setOnSucceeded(event -> {
+					unlockControls();
+					JOptionPane.showConfirmDialog(null,
+							"All processes concluded with success");
 				});
 
+				// The thread will run in background
+				new Thread(worker).start();
 			}
+		} else {
+			// Send a cancel signal to the task
+			worker.cancel();			
+			unlockControls();
 		}
 
 	}
@@ -188,4 +144,5 @@ public class ResourceGenController extends BaseController {
 	public boolean getLockedStatus() {
 		return locked;
 	}
+
 }

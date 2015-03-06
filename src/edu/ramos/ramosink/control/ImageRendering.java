@@ -16,6 +16,10 @@ import edu.ramos.ramosink.application.Main;
 import edu.ramos.ramosink.model.Status;
 import edu.ramos.ramosink.model.Stroke;
 
+/**
+ * @author glauberrleite
+ *
+ */
 public class ImageRendering extends Thread {
 
 	private final float PEN_TIP_WIDTH = 0.5f;
@@ -30,33 +34,41 @@ public class ImageRendering extends Thread {
 	private int index;
 	private long time;
 	private int size;
+	private WorkerTask task;
 
 	public List<Stroke> strokes = new ArrayList<>();
 
-	public ImageRendering(String inkMLPath) {
+	public ImageRendering(String inkMLPath, WorkerTask task) {
 		this.inkMLPath = inkMLPath;
 		index = 1;
 		size = 1;
+		this.task = task;
 
 		// Determining the files
 		File file = new File(inkMLPath);
-		absoluteOutputDir = file.getParent() + System.getProperty("file.separator");
-		tempDir = absoluteOutputDir + "temp" + System.getProperty("file.separator");
+		absoluteOutputDir = file.getParent()
+				+ System.getProperty("file.separator");
+		tempDir = absoluteOutputDir + "temp"
+				+ System.getProperty("file.separator");
 		// Taking the filename without the extension
 		filename = file.getName().split(".")[0];
 
 		time = new Date().getTime();
 	}
 
-	public ImageRendering(String inkMLPath, int index, int length) {
+	public ImageRendering(String inkMLPath, int index, int length,
+			WorkerTask task) {
 		this.inkMLPath = inkMLPath;
 		this.index = index;
 		this.size = length;
+		this.task = task;
 
 		// Determining the files
 		File file = new File(inkMLPath);
-		absoluteOutputDir = file.getParent() + System.getProperty("file.separator");
-		tempDir = absoluteOutputDir + "temp" + System.getProperty("file.separator");
+		absoluteOutputDir = file.getParent()
+				+ System.getProperty("file.separator");
+		tempDir = absoluteOutputDir + "temp"
+				+ System.getProperty("file.separator");
 		// Taking the filename without the extension
 		filename = file.getName();
 
@@ -83,13 +95,13 @@ public class ImageRendering extends Thread {
 			graphics2d.setStroke(new BasicStroke(PEN_TIP_WIDTH));
 
 			if (size > 1) {
-				Main.setStatus(Status.GENERATING_IMAGE, index, size);
+				task.setStatus(Status.GENERATING_IMAGE, index, size);
 			} else {
-				Main.setStatus(Status.GENERATING_IMAGE);
+				task.setStatus(Status.GENERATING_IMAGE);
 			}
 
 			for (int i = 1; i < strokes.size(); i++) {
-				Main.setProgress((100 * i) / strokes.size());
+				task.setProgress((100 * i) / strokes.size());
 
 				// draws
 				if (strokes.get(i).getId() == strokes.get(i - 1).getId()) {
@@ -122,12 +134,10 @@ public class ImageRendering extends Thread {
 
 			ImageIO.write(buffer, IMAGE_FORMAT.toUpperCase(), image);
 
-			// deleteTempFiles();
-
 			if (size > 1) {
-				Main.setStatus(Status.SUCCESS, index, size);
+				task.setStatus(Status.SUCCESS, index, size);
 			} else {
-				Main.setStatus(Status.SUCCESS);
+				task.setStatus(Status.SUCCESS);
 			}
 
 			Thread.sleep(3000);
@@ -157,7 +167,7 @@ public class ImageRendering extends Thread {
 
 			for (int i = 1; i < strokes.size(); i++) {
 				// progress bar
-				Main.setProgress((50 * i) / strokes.size());
+				task.setProgress((50 * i) / strokes.size());
 
 				// build frames
 				diff += strokes.get(i).getTime() - strokes.get(i - 1).getTime();
@@ -225,9 +235,9 @@ public class ImageRendering extends Thread {
 		}
 
 		if (size > 1) {
-			Main.setStatus(Status.GENERATING_VIDEO, index, size);
+			task.setStatus(Status.GENERATING_VIDEO, index, size);
 		} else {
-			Main.setStatus(Status.GENERATING_VIDEO);
+			task.setStatus(Status.GENERATING_VIDEO);
 		}
 
 		// Retrieving in a data structure a list of objects representing points
@@ -235,11 +245,12 @@ public class ImageRendering extends Thread {
 		strokes = RetrieveStrokes.getInstance().getPointsFromXML(inkMLPath);
 
 		generateFramesFromPoints();
-		
+
 		VideoFactory videoFactory = VideoFactory.getInstance();
 
 		videoFactory.setDirPath(tempDir);
 
+		videoFactory.setTask(task);
 		videoFactory.setImageFormat("." + IMAGE_FORMAT);
 		videoFactory.setFrameRate(10);
 		videoFactory.setWidth(566);
@@ -247,15 +258,15 @@ public class ImageRendering extends Thread {
 		videoFactory.setOutputfile(absoluteOutputDir + time + "-" + filename
 				+ "_WritingVideo.mp4");
 		videoFactory.generateVideo();
-		
+
 		deleteTempFiles();
 
-		Main.setProgress(100);
+		task.setProgress(100);
 
 		if (size > 1) {
-			Main.setStatus(Status.SUCCESS, index, size);
+			task.setStatus(Status.SUCCESS, index, size);
 		} else {
-			Main.setStatus(Status.SUCCESS);
+			task.setStatus(Status.SUCCESS);
 		}
 
 		try {
