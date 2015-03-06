@@ -236,7 +236,6 @@ public class ImageRendering extends Thread {
 
 		generateFramesFromPoints();
 		
-		/*
 		VideoFactory videoFactory = VideoFactory.getInstance();
 
 		videoFactory.setDirPath(tempDir);
@@ -246,10 +245,10 @@ public class ImageRendering extends Thread {
 		videoFactory.setWidth(566);
 		videoFactory.setHeight(800);
 		videoFactory.setOutputfile(absoluteOutputDir + time + "-" + filename
-				+ "_WritingVideo.avi");
+				+ "_WritingVideo.mp4");
 		videoFactory.generateVideo();
-		*/
-		//deleteTempFiles();
+		
+		deleteTempFiles();
 
 		Main.setProgress(100);
 
