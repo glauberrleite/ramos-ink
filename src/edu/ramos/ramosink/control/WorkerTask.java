@@ -31,6 +31,13 @@ public class WorkerTask extends Task<Void> {
 				ImageRendering render = new ImageRendering(path, i,
 						filesListItems.size(), this);
 
+				// This is necessary if the thread was cancelled, because it
+				// runs background and the main JavaFX thread have no control
+				// over it
+				if (isCancelled()) {
+					break;
+				}
+
 				render.generateLastFrame();
 
 				i++;
@@ -43,14 +50,23 @@ public class WorkerTask extends Task<Void> {
 				ImageRendering render = new ImageRendering(path, i,
 						filesListItems.size(), this);
 
+				// This is necessary if the thread was cancelled, because it
+				// runs background and the main JavaFX thread have no control
+				// over it
+				if (isCancelled()) {
+					break;
+				}
+
 				render.run();
 
 				i++;
 			}
 		}
 
-		setStatus(Status.IDLE);
-		setProgress(0);
+		if (!isCancelled()) {
+			setStatus(Status.IDLE);
+			setProgress(0);
+		}
 		return null;
 	}
 
@@ -90,5 +106,4 @@ public class WorkerTask extends Task<Void> {
 	public void setProgress(double percentage) {
 		updateProgress(percentage, 100);
 	}
-
 }

@@ -51,7 +51,7 @@ public class ImageRendering extends Thread {
 		tempDir = absoluteOutputDir + "temp"
 				+ System.getProperty("file.separator");
 		// Taking the filename without the extension
-		filename = file.getName().split(".")[0];
+		filename = file.getName().replaceFirst("[.][^.]+$", "");
 
 		time = new Date().getTime();
 	}
@@ -70,7 +70,7 @@ public class ImageRendering extends Thread {
 		tempDir = absoluteOutputDir + "temp"
 				+ System.getProperty("file.separator");
 		// Taking the filename without the extension
-		filename = file.getName();
+		filename = file.getName().replaceFirst("[.][^.]+$", "");
 
 		time = new Date().getTime();
 	}
@@ -126,7 +126,7 @@ public class ImageRendering extends Thread {
 			}
 
 			File image = new File(absoluteOutputDir + time + "-" + filename
-					+ "_WritingImage" + "." + IMAGE_FORMAT);
+					+ "-WritingImage" + "." + IMAGE_FORMAT);
 
 			ImageIO.write(buffer, IMAGE_FORMAT.toUpperCase(), image);
 
@@ -136,7 +136,12 @@ public class ImageRendering extends Thread {
 				task.setStatus(Status.SUCCESS);
 			}
 
-			Thread.sleep(1000);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException exception) {
+				// This is used only to treat when the task is cancelled during
+				// sleeping
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -163,7 +168,14 @@ public class ImageRendering extends Thread {
 			graphics2d.setStroke(new BasicStroke(PEN_TIP_WIDTH));
 
 			for (int i = 1; i < strokes.size(); i++) {
-				// progress bar
+				// This is necessary if the thread was cancelled, because it
+				// runs background and the main JavaFX thread have no control
+				// over it
+				if (task.isCancelled()) {
+					break;
+				}
+
+				// Progress Bar
 				task.setProgress((50 * i) / strokes.size());
 
 				// build frames
@@ -239,29 +251,38 @@ public class ImageRendering extends Thread {
 
 		generateFramesFromPoints();
 
-		VideoFactory videoFactory = VideoFactory.getInstance();
+		// Only continues if the generateFramesFromPoints() finished with the
+		// task active
+		if (!task.isCancelled()) {
 
-		videoFactory.setDirPath(tempDir);
+			VideoFactory videoFactory = VideoFactory.getInstance();
 
-		videoFactory.setTask(task);
-		videoFactory.setImageFormat("." + IMAGE_FORMAT);
-		videoFactory.setFrameRate(10);
-		videoFactory.setWidth(566);
-		videoFactory.setHeight(800);
-		videoFactory.setOutputfile(absoluteOutputDir + time + "-" + filename
-				+ "_WritingVideo.mp4");
-		videoFactory.generateVideo();
+			videoFactory.setDirPath(tempDir);
 
+			videoFactory.setTask(task);
+			videoFactory.setImageFormat("." + IMAGE_FORMAT);
+			videoFactory.setFrameRate(10);
+			videoFactory.setWidth(566);
+			videoFactory.setHeight(800);
+			videoFactory.setOutputfile(absoluteOutputDir + time + "-"
+					+ filename + "-WritingVideo.mp4");
+			videoFactory.generateVideo();
+		}
+
+		// It may delete the temporary files when the Task is running or
+		// cancelled
 		deleteTempFiles();
 
-		task.setProgress(100);
-
-		task.setStatus(Status.SUCCESS, index, size);
+		if (!task.isCancelled()) {
+			task.setProgress(100);
+			task.setStatus(Status.SUCCESS, index, size);
+		}
 
 		try {
-			Thread.sleep(3000);
-		} catch (Exception e) {
-			e.printStackTrace();
+			Thread.sleep(1000);
+		} catch (InterruptedException exception) {
+			// This is used only to treat when the task is cancelled during
+			// sleeping
 		}
 	}
 

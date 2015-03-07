@@ -119,7 +119,16 @@ public class ResourceGenController extends BaseController {
 			}
 		} else {
 			// Send a cancel signal to the task
-			worker.cancel();			
+			worker.cancel();
+
+			JOptionPane
+					.showMessageDialog(null,
+							"Task cancelled... All items already processed will keep existing");
+			// unbinding
+			Main.getStatus().textProperty().unbind();
+			Main.getProgressBar().progressProperty().unbind();
+			Main.getStatus().setText("Status: Idle");
+			Main.getProgressBar().setProgress(0);
 			unlockControls();
 		}
 
@@ -129,7 +138,7 @@ public class ResourceGenController extends BaseController {
 		filesList.setDisable(true);
 		imageBox.setDisable(true);
 		videoBox.setDisable(true);
-		generateButton.setDisable(true);
+		generateButton.setText("Cancel");
 		locked = true;
 	}
 
@@ -137,7 +146,7 @@ public class ResourceGenController extends BaseController {
 		filesList.setDisable(false);
 		imageBox.setDisable(false);
 		videoBox.setDisable(false);
-		generateButton.setDisable(false);
+		generateButton.setText("Generate");
 		locked = false;
 	}
 

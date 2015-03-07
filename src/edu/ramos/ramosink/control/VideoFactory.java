@@ -79,6 +79,11 @@ public class VideoFactory {
 			for (int index = 1; (curret_image = new File(dirPath + index
 					+ imageFormat)).exists(); index++) {
 
+				// Should check if the Task was cancelled
+				if (task.isCancelled()) {
+					break;
+				}
+
 				// sets progress bar
 				task.setProgress(50 + ((index * 50) / count));
 
@@ -96,6 +101,10 @@ public class VideoFactory {
 				System.out.println("encoded image: " + index);
 			}
 			writer.close();
+
+			if (task.isCancelled()) {
+				new File(outputfile).delete();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
