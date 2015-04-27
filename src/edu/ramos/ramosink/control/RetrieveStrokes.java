@@ -59,6 +59,13 @@ import edu.ramos.ramosink.model.Stroke;
 
 public class RetrieveStrokes {
 
+	/* Depending on the mask used, a margin correction may be necessary.
+	 * It occurs because of the difference between the size and margins of real paper, and
+	 * the size and margins of the mask file.
+	 * Negatives margin values moves x for the left and y for up. */
+	private static final long X_MARGIN_CORRECTION = - 97;
+	private static final long Y_MARGIN_CORRECTION = - 25;
+	
 	public static RetrieveStrokes instance;
 
 	private RetrieveStrokes() {
@@ -107,8 +114,8 @@ public class RetrieveStrokes {
 					Element stroke = (Element) j.next();
 
 					long time = Long.parseLong(stroke.attributeValue("Time"));
-					long x = Long.parseLong(stroke.attributeValue("X"));
-					long y = Long.parseLong(stroke.attributeValue("Y"));
+					long x = Long.parseLong(stroke.attributeValue("X")) + X_MARGIN_CORRECTION;
+					long y = Long.parseLong(stroke.attributeValue("Y")) + Y_MARGIN_CORRECTION;
 
 					Stroke s = new Stroke(id, time, x / 10, y / 10);
 
