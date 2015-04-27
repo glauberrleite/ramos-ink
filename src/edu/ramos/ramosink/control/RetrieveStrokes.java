@@ -63,7 +63,7 @@ public class RetrieveStrokes {
 	 * It occurs because of the difference between the size and margins of real paper, and
 	 * the size and margins of the mask file.
 	 * Negatives margin values moves x for the left and y for up. */
-	private static final long X_MARGIN_CORRECTION = - 97;
+	private static final long X_MARGIN_CORRECTION = - 65;
 	private static final long Y_MARGIN_CORRECTION = - 25;
 	
 	public static RetrieveStrokes instance;
