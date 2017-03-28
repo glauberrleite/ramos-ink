@@ -1,5 +1,5 @@
 # RAMOS Ink
-RAMOS Ink converts InkML files received from the Livescribe Smartpen's penlet called HandSpy to image and/or video. This tool is a part of the RAMOS system, developed to run in an independent way.
+RAMOS Ink is a tool to convert InkML files received from a Livescribe Smartpen's penlet called HandSpy to image and/or video. This software is a part of the RAMOS system, a bigger software developed in a project that I was part of, and was developed to run independently. The RAMOS system offers some other features, like production samples management and transcription assistant but it was developed by me, my friend Josmário, and concepted by some researchers, so I don't know if I can simply make it public. In other hand, RAMOS Ink is free under GPL v3.
 
 ## Building and Distribution
 
